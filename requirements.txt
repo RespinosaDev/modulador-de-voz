@@ -1,0 +1,6 @@
+# Versiones probadas con Python 3.12 en Windows.
+numpy==1.26.4
+scipy==1.13.1
+matplotlib==3.8.4
+soundfile==0.12.1
+sounddevice==0.4.7
