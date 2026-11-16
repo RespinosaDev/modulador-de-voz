@@ -1,4 +1,4 @@
-# 🎙️ Modulador de voz
+#  Modulador de voz
 
 Aplicación de escritorio en **Python** para **analizar y modificar la voz**: cambia el tono en semitonos, la velocidad (x0,5 · x1,5 · x2), aplica efectos por síntesis LPC, añade o elimina ruido, y muestra paso a paso el análisis de la señal: enventanado, energía, pitch, envolvente LPC, formantes, filtrado inverso, **separación del tracto vocal y del flujo glotal (IAIF)** y cepstrum.
 
@@ -155,15 +155,3 @@ pytest
 ## Tecnologías
 
 Python · NumPy · SciPy · Matplotlib · Tkinter · soundfile · sounddevice · pytest
-
-## Referencias
-
-- L. R. Rabiner y R. W. Schafer, *Digital Processing of Speech Signals*, Prentice Hall, 1978.
-- P. Alku, «Glottal wave analysis with pitch synchronous iterative adaptive inverse filtering», *Speech Communication*, 11(2-3), 1992.
-- E. Moulines y F. Charpentier, «Pitch-synchronous waveform processing techniques for text-to-speech synthesis using diphones», *Speech Communication*, 9(5-6), 1990.
-- S. F. Boll, «Suppression of acoustic noise in speech using spectral subtraction», *IEEE Trans. ASSP*, 27(2), 1979.
-- J. L. Flanagan y R. M. Golden, «Phase vocoder», *Bell System Technical Journal*, 45(9), 1966.
-
-## Licencia
-
-[MIT](LICENSE)
