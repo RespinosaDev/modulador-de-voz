@@ -1,38 +1,42 @@
-#  Modulador de voz
+# Modulador de voz
 
-Aplicación de escritorio en **Python** para **analizar y modificar la voz**: cambia el tono en semitonos, la velocidad (x0,5 · x1,5 · x2), aplica efectos por síntesis LPC, añade o elimina ruido, y muestra paso a paso el análisis de la señal: enventanado, energía, pitch, envolvente LPC, formantes, filtrado inverso, **separación del tracto vocal y del flujo glotal (IAIF)** y cepstrum.
+Aplicación de escritorio en **Python** para **modificar y analizar la voz**. Puedes cargar un audio y cambiarle el tono en semitonos o la velocidad (x0,5, x1,5 o x2), ponerle efectos como voz de robot o susurro, añadirle ruido o quitárselo, y guardarlo en otro formato. También saca las gráficas de todo el análisis que vimos en clase: enventanado, energía, pitch, LPC y formantes, filtrado inverso, **separación del tracto vocal y del flujo glotal** y cepstrum.
 
-Proyecto de la asignatura **Biometría de la Voz**, realizado en equipo por **2 personas**.
+Es el proyecto de la asignatura **Biometría de la Voz** del Grado en Ingeniería Informática (UPM). Lo hicimos entre **2 personas**.
 
 ![Interfaz: comparación de la voz original y la voz subida 5 semitonos](docs/img/interfaz_comparacion.png)
 
 ---
 
-## Funcionalidades
+## Qué se puede hacer
 
-### Modulación de la voz
-| Función | Técnica | Módulo |
+### Modificar la voz
+
+| Función | Cómo está hecho | Código |
 |---|---|---|
-| Subir / bajar el tono de -12 a +12 semitonos sin cambiar la duración | **TD-PSOLA** (*Pitch-Synchronous Overlap-Add*) o **phase vocoder** + remuestreo | [`modificacion.py`](modulador_voz/modificacion.py) |
-| Velocidad **x0,5 · x1 · x1,5 · x2** (botones) | **Phase vocoder** (mantiene el tono) o remuestreo (cambia el tono, efecto «cinta») | [`modificacion.py`](modulador_voz/modificacion.py) |
-| Efectos **robot**, **susurro** y **vocoder LPC** | Síntesis LPC: filtro del tracto vocal excitado por tren de impulsos o ruido | [`lpc.py`](modulador_voz/lpc.py) |
-| Añadir ruido blanco o rosa con **SNR** controlada | Escalado de potencia | [`ruido.py`](modulador_voz/ruido.py) |
-| Reducción de ruido | **Sustracción espectral** (Boll) con sobresustracción y suelo espectral | [`ruido.py`](modulador_voz/ruido.py) |
-| Cargar, reproducir, guardar y **convertir** entre WAV, FLAC, OGG y MP3 | `soundfile` + `sounddevice` | [`audio_io.py`](modulador_voz/audio_io.py) |
+| Subir o bajar el tono de -12 a +12 semitonos sin cambiar la duración | **TD-PSOLA** o **phase vocoder** + remuestreo (se puede elegir) | [`modificacion.py`](modulador_voz/modificacion.py) |
+| Botones de velocidad **x0,5, x1, x1,5 y x2** | **Phase vocoder** si quieres mantener el tono, o remuestreo simple si no (suena como una cinta acelerada) | [`modificacion.py`](modulador_voz/modificacion.py) |
+| Efectos de **robot**, **susurro** y **vocoder LPC** | Síntesis LPC: el filtro del tracto vocal de cada trama se excita con un tren de impulsos o con ruido | [`lpc.py`](modulador_voz/lpc.py) |
+| Añadir ruido blanco o rosa con una **SNR** concreta | Se escala el ruido según la potencia de la señal | [`ruido.py`](modulador_voz/ruido.py) |
+| Quitar ruido | **Sustracción espectral** | [`ruido.py`](modulador_voz/ruido.py) |
+| Cargar, escuchar, guardar y **convertir** entre WAV, FLAC, OGG y MP3 | `soundfile` y `sounddevice` | [`audio_io.py`](modulador_voz/audio_io.py) |
 
-### Análisis de la señal (gráficas)
-| Gráfica | Qué muestra | Módulo |
+### Analizar la señal
+
+Cada análisis tiene su botón en la interfaz y se puede hacer sobre la señal original o sobre la modificada.
+
+| Gráfica | Qué enseña | Código |
 |---|---|---|
-| Señal y espectrograma | Forma de onda y espectrogramas de **banda ancha** (formantes) y **banda estrecha** (armónicos), con **preénfasis** opcional | [`analisis.py`](modulador_voz/analisis.py) |
-| Energía y ZCR | **Enventanado** en tramas, **energía a corto plazo**, **tasa de cruces por cero** y clasificación **silencio / sorda / sonora** | [`analisis.py`](modulador_voz/analisis.py) |
-| Pitch | Contorno de F0 y comparación de tres métodos: **autocorrelación**, **AMDF** y **cepstrum** | [`pitch.py`](modulador_voz/pitch.py) |
-| LPC y formantes | Coeficientes LPC por **Levinson-Durbin**, **envolvente LPC** sobre el espectro, **formantes** F1-F3, polos en el plano z y efecto del orden | [`lpc.py`](modulador_voz/lpc.py) |
-| Filtrado inverso | **Residuo LPC** (excitación) frente a la voz y sus espectros | [`lpc.py`](modulador_voz/lpc.py) |
-| Flujo glotal | **Separación tracto vocal / fuente glotal** con **IAIF**: derivada del flujo glotal, flujo glotal y respuesta del tracto vocal | [`lpc.py`](modulador_voz/lpc.py) |
-| Cepstrum | **Cepstrum real**, pico de pitch y **liftering** (envolvente frente a excitación) | [`cepstrum.py`](modulador_voz/cepstrum.py) |
-| Comparar | Original frente a procesada: forma de onda, espectrograma y F0 | [`graficas.py`](modulador_voz/graficas.py) |
+| Señal y espectrograma | La forma de onda y los espectrogramas de **banda ancha** (se ven los formantes) y de **banda estrecha** (se ven los armónicos). Con **preénfasis** opcional | [`analisis.py`](modulador_voz/analisis.py) |
+| Energía y ZCR | La señal dividida en **ventanas**, la **energía a corto plazo**, la **tasa de cruces por cero** y qué tramos son **silencio, sordos o sonoros** | [`analisis.py`](modulador_voz/analisis.py) |
+| Pitch | El contorno de F0, comparando tres métodos: **autocorrelación**, **AMDF** y **cepstrum** | [`pitch.py`](modulador_voz/pitch.py) |
+| LPC y formantes | Los coeficientes LPC (**Levinson-Durbin**), la **envolvente LPC** sobre el espectro, los **formantes** F1-F3, los polos y cómo cambia la envolvente con el orden | [`lpc.py`](modulador_voz/lpc.py) |
+| Filtrado inverso | El **residuo LPC**, es decir, lo que queda al quitarle el tracto vocal a la voz | [`lpc.py`](modulador_voz/lpc.py) |
+| Flujo glotal | La **separación entre el tracto vocal y la fuente glotal** con **IAIF**: la derivada del flujo glotal, el flujo glotal y la respuesta del tracto vocal | [`lpc.py`](modulador_voz/lpc.py) |
+| Cepstrum | El **cepstrum real**, el pico del pitch y el **liftering** para separar la envolvente de la excitación | [`cepstrum.py`](modulador_voz/cepstrum.py) |
+| Comparar | La señal original al lado de la modificada: forma de onda, espectrograma y F0 | [`graficas.py`](modulador_voz/graficas.py) |
 
-En la interfaz se pueden cambiar el **tipo de ventana** (rectangular, Hamming, Hann, Blackman), la **duración de la trama**, el **salto**, el **orden LPC**, el **preénfasis** y el **método de pitch**.
+Desde la interfaz se pueden cambiar el **tipo de ventana** (rectangular, Hamming, Hann o Blackman), la **duración de la trama**, el **salto**, el **orden LPC**, el **preénfasis** y el **método de pitch**.
 
 ---
 
@@ -41,36 +45,36 @@ En la interfaz se pueden cambiar el **tipo de ventana** (rectangular, Hamming, H
 | Separación del flujo glotal (IAIF) | Envolvente LPC y formantes |
 |---|---|
 | ![Flujo glotal](docs/img/flujo_glotal.png) | ![LPC y formantes](docs/img/lpc_formantes.png) |
-| **Energía, ZCR y decisión sonora / sorda** | **Pitch con tres métodos** |
+| **Energía, ZCR y tramos sonoros / sordos** | **Pitch con los tres métodos** |
 | ![Energía y ZCR](docs/img/energia_zcr.png) | ![Pitch](docs/img/pitch.png) |
 | **Filtrado inverso (residuo LPC)** | **Cepstrum y liftering** |
 | ![Filtrado inverso](docs/img/filtrado_inverso.png) | ![Cepstrum](docs/img/cepstrum.png) |
 
 ---
 
-## Fundamentos
+## Un poco de teoría
 
-**Modelo fuente-filtro.** La voz se modela como una excitación (el flujo de aire glotal en los sonidos sonoros, ruido en los sordos) filtrada por el tracto vocal. En el dominio z:
+**Modelo fuente-filtro.** La idea de la que parte casi todo el proyecto es que la voz es una excitación (el aire que sale de la glotis en los sonidos sonoros, o ruido en los sordos) que pasa por el tracto vocal, que actúa como un filtro:
 
 $$S(z) = G(z)\,V(z)\,R(z)$$
 
-donde $G$ es el pulso glotal, $V$ el tracto vocal y $R$ la radiación labial (≈ derivador).
+$G$ es el pulso glotal, $V$ el tracto vocal y $R$ la radiación de los labios, que se comporta más o menos como un derivador.
 
-**LPC.** El tracto vocal se aproxima con un filtro todo polos $V(z) = \dfrac{g}{A(z)}$, con $A(z) = 1 + \sum_{k=1}^{p} a_k z^{-k}$. Los coeficientes minimizan el error de predicción $e[n] = s[n] + \sum_k a_k\, s[n-k]$, lo que lleva a las ecuaciones de Yule-Walker, que se resuelven con **Levinson-Durbin**. Las raíces de $A(z)$ dan los **formantes**: frecuencia $\theta\,f_s/2\pi$ y ancho de banda $-\ln|r|\,f_s/\pi$.
+**LPC.** El tracto vocal se aproxima con un filtro solo de polos, $V(z) = \dfrac{g}{A(z)}$ con $A(z) = 1 + \sum_{k=1}^{p} a_k z^{-k}$. Los coeficientes son los que hacen mínimo el error de predicción $e[n] = s[n] + \sum_k a_k\, s[n-k]$, y se calculan con **Levinson-Durbin**. Las raíces de $A(z)$ dan los **formantes**: la frecuencia sale del ángulo del polo ($\theta\,f_s/2\pi$) y el ancho de banda de su módulo ($-\ln|r|\,f_s/\pi$).
 
-**Filtrado inverso e IAIF.** Filtrar la voz con $A(z)$ elimina el tracto vocal y deja la excitación (residuo). **IAIF** (*Iterative Adaptive Inverse Filtering*, Alku 1992) repite el proceso dos veces, modelando primero la inclinación espectral glotal, para obtener un modelo del tracto vocal más limpio. Al integrar el resultado se obtiene el **flujo glotal**.
+**Filtrado inverso e IAIF.** Si filtras la voz con $A(z)$ quitas el efecto del tracto vocal y te queda la excitación. **IAIF** (*Iterative Adaptive Inverse Filtering*) hace esto dos veces, quitando primero la inclinación del espectro que mete la glotis, para que el modelo del tracto vocal salga más limpio. Integrando el resultado se obtiene el **flujo glotal**.
 
-**Cepstrum.** $c[q] = \mathcal{F}^{-1}\{\log|X(f)|\}$. El logaritmo convierte el producto fuente × filtro en una suma: el tracto vocal ocupa las quefrencias bajas y la excitación produce un pico en el periodo fundamental.
+**Cepstrum.** $c[q] = \mathcal{F}^{-1}\{\log|X(f)|\}$. Al tomar el logaritmo, el producto fuente × filtro pasa a ser una suma: el tracto vocal se queda en las quefrencias bajas y la excitación da un pico en el periodo fundamental.
 
-**Cambio de tono.** Subir $n$ semitonos multiplica F0 por $2^{n/12}$. **TD-PSOLA** extrae segmentos de dos periodos centrados en cada marca de pitch y los vuelve a sumar con una separación $T/\alpha$, lo que cambia F0 sin alterar la duración ni los formantes.
+**Cambio de tono.** Subir $n$ semitonos es multiplicar F0 por $2^{n/12}$. **TD-PSOLA** recorta trozos de dos periodos centrados en cada marca de pitch y los vuelve a sumar más juntos o más separados ($T/\alpha$). Así cambia el tono pero no la duración ni los formantes.
 
-**Phase vocoder.** Cambia la duración interpolando los módulos de la STFT y reconstruyendo la fase con la frecuencia instantánea de cada canal. Combinado con un remuestreo permite cambiar el tono sin cambiar la duración.
+**Phase vocoder.** Para cambiar la duración se interpolan los módulos de la STFT y se reconstruye la fase a partir de la frecuencia instantánea de cada canal. Si después se remuestrea, sirve también para cambiar el tono sin cambiar la duración.
 
 ---
 
 ## Instalación
 
-Requiere **Python 3.10 o superior**.
+Hace falta **Python 3.10 o superior**.
 
 ```bash
 git clone https://github.com/RespinosaDev/modulador-de-voz.git
@@ -93,27 +97,26 @@ Instala las dependencias:
 pip install -r requirements.txt
 ```
 
-> En Windows 11 con el **Control inteligente de aplicaciones** activado, versiones muy recientes de NumPy o SciPy pueden bloquearse al importarlas. Las versiones de `requirements.txt` están probadas y funcionan.
+> Si usas Windows 11 con el **Control inteligente de aplicaciones** activado, puede que las versiones más nuevas de NumPy o SciPy se bloqueen al importarlas. Por eso `requirements.txt` fija unas versiones algo más antiguas con las que sí funciona.
 
-## Uso
+## Cómo se usa
 
 ```bash
 python main.py
 ```
 
-1. Pulsa **Cargar audio…** (WAV, FLAC, OGG o MP3) o **Audio de ejemplo**.
-2. Mueve el control de **semitonos**, elige **PSOLA** o **Phase vocoder** y pulsa un botón de **velocidad** o **Aplicar modulación**.
-3. Aplica efectos (**Robot**, **Susurro**, **Vocoder LPC**, **Añadir ruido**, **Sustracción espectral**). Se encadenan sobre la señal procesada.
-4. Escucha con **▶ Original** / **▶ Procesada**.
-5. Pulsa cualquier botón de gráfica para ver el análisis de la señal original o de la procesada.
-6. **Guardar / convertir formato…** guarda la señal en el formato elegido por la extensión.
+1. Pulsa **Cargar audio…** (WAV, FLAC, OGG o MP3) o **Audio de ejemplo** si no tienes ninguno a mano.
+2. Elige los **semitonos** y el método (**PSOLA** o **Phase vocoder**) y pulsa un botón de **velocidad** o **Aplicar modulación**.
+3. Si quieres, añade efectos: **Robot**, **Susurro**, **Vocoder LPC**, **Añadir ruido** o **Sustracción espectral**. Se van aplicando uno detrás de otro sobre la señal modificada.
+4. Escúchala con los botones de **Original** y **Procesada**.
+5. Pulsa cualquier botón de gráfica para ver el análisis.
+6. Con **Guardar / convertir formato…** la guardas en el formato que pongas en la extensión.
 
-Las funciones también se pueden usar desde código:
+Las funciones también se pueden usar directamente desde Python:
 
 ```python
 from modulador_voz.audio_io import cargar_audio, guardar_audio
 from modulador_voz.modificacion import cambiar_semitonos, cambiar_velocidad
-from modulador_voz.lpc import iaif, sintesis_lpc
 
 x, fs = cargar_audio("ejemplos/frase_sintetica.wav")
 y = cambiar_semitonos(x, fs, -4, metodo="psola")
@@ -125,27 +128,27 @@ guardar_audio("salida.mp3", y, fs)
 
 ```
 modulador-de-voz/
-├── main.py                  # Punto de entrada (interfaz gráfica)
+├── main.py                  # Arranca la interfaz
 ├── modulador_voz/
 │   ├── analisis.py          # Preénfasis, enventanado, energía, ZCR, sonoro/sordo, espectrograma
 │   ├── pitch.py             # F0 por autocorrelación y AMDF
-│   ├── cepstrum.py          # Cepstrum real, liftering y F0 cepstral
+│   ├── cepstrum.py          # Cepstrum real, liftering y F0 por cepstrum
 │   ├── lpc.py               # Levinson-Durbin, envolvente, formantes, filtrado inverso, IAIF, síntesis LPC
 │   ├── modificacion.py      # TD-PSOLA, phase vocoder, semitonos y velocidad
 │   ├── ruido.py             # Ruido con SNR y sustracción espectral
 │   ├── audio_io.py          # Cargar, guardar, convertir y reproducir
-│   ├── graficas.py          # Gráficas de análisis (matplotlib)
-│   ├── interfaz.py          # Interfaz Tkinter
-│   └── sintetico.py         # Vocales sintéticas (pulso de Rosenberg + formantes)
+│   ├── graficas.py          # Gráficas del análisis (matplotlib)
+│   ├── interfaz.py          # Interfaz con Tkinter
+│   └── sintetico.py         # Vocales sintéticas para las pruebas
 ├── tests/                   # Pruebas con pytest
-├── scripts/                 # Generación de figuras y capturas
+├── scripts/                 # Scripts para generar las figuras y capturas del README
 ├── ejemplos/                # Audios de ejemplo
 └── docs/img/                # Imágenes del README
 ```
 
 ## Pruebas
 
-Las pruebas usan voz sintética, de la que se conocen la fuente y el filtro, para comprobar que los algoritmos recuperan los valores reales: F0 (los tres métodos), formantes, coeficientes de un proceso AR, la derivada del flujo glotal con IAIF, el cambio de tono en semitonos (PSOLA y phase vocoder), la duración tras el cambio de velocidad, la SNR y la mejora de la sustracción espectral.
+Para comprobar que los algoritmos funcionan, los tests usan **vocales sintéticas**: como sabemos exactamente qué pitch, formantes y flujo glotal tienen, se puede mirar si lo que calcula el programa coincide. Se prueba el pitch con los tres métodos, los formantes, la derivada del flujo glotal con IAIF, que el cambio de semitonos dé el tono correcto (con PSOLA y con phase vocoder), la duración después de cambiar la velocidad, la SNR del ruido añadido y que la sustracción espectral mejore la señal.
 
 ```bash
 pip install -r requirements-dev.txt
